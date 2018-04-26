@@ -1,8 +1,8 @@
 Team Members: Arnold Ballesteros, Ronald Hung
-Date:  5/06/18
-Project ID: Project
-CS Class: CS3595
-Programming Language: C++
-OS/Hardware Dependencies: UNIX, g++
+\nDate:  5/06/18
+\nProject ID: Project
+\nCS Class: CS3595
+\nProgramming Language: C++
+\nOS/Hardware Dependencies: UNIX, g++
 
-Problem Description: This program implements a server and client
+\nProblem Description: This program implements a server and client
