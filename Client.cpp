@@ -73,7 +73,7 @@ int main(){
 			close(clientSocket);
 			printf("[-]Disconnected from server.\n");
 			exit(1);
-		}
+		} 
 
 		/*
 			recv(int socket, void buffer, size_t length, int flags)
@@ -84,7 +84,7 @@ int main(){
 		if(recv(clientSocket, buffer, 1024, 0) < 0){
 			printf("[-]Error in receiving data.\n");
 		}else{
-			printf("Server: \t%s\n", buffer);
+			printf("Server: \n%s\n ", buffer);
 		}
 	}
 
