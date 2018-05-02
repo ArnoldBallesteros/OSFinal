@@ -6,6 +6,11 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <iostream>
+#include <string>
+
+
+using namespace std;
 
 #define PORT 4444
 
@@ -57,8 +62,9 @@ int main(){
 			 format = "%S"
 			 &buffer[0] = input
 		*/
-		scanf("%s", &buffer[0]);
 
+		/*sscanf("%s", &buffer[0]);*/
+		fgets(buffer,1024,stdin);
 		/*
 			send(int socket, const void *buffer, size_t llength, int flags)
 			socket = clientSocket = File Descriptor
@@ -73,7 +79,7 @@ int main(){
 			close(clientSocket);
 			printf("[-]Disconnected from server.\n");
 			exit(1);
-		} 
+		}
 
 		/*
 			recv(int socket, void buffer, size_t length, int flags)
