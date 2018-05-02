@@ -1,6 +1,6 @@
 # OS FINAL
 #### Team Members:
-*Arnold Ballesteros, Ronald Hung*
+*Arnold Ballesteros, Ronald Hung, Anthony Palamaro*
 #### Date:  *5/06/18*
 #### Project ID: *Project*
 #### CS Class: *CS3595*
