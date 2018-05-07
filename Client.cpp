@@ -8,6 +8,10 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <ctime>
+#include <time.h>
+#include <cstdlib>
 
 
 using namespace std;
@@ -15,11 +19,12 @@ using namespace std;
 #define PORT 4444
 
 int main(){
-
+	time_t result = time(NULL);
 	int clientSocket, ret;
 	/* Specifies a local or remote endpoint address to connect a socket to */
 	struct sockaddr_in serverAddr;
 	char buffer[1024];
+
 	/*
 		socket(int domain , int type, int protocol)
 			domain = AF_INET = Designates type of addresses that socket can communicate with. AF_INET safest
@@ -29,10 +34,10 @@ int main(){
 	clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 	/*End Program if No connection*/
 	if(clientSocket < 0){
-		printf("[-]Error in connection.\n");
+		printf("!!! Connection Failed !!!\n");
 		exit(1);
 	}
-	printf("[+]Client Socket is created.\n");
+	printf("!!! Socket Connected !!!\n");
 
 	memset(&serverAddr, '\0', sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET; /*Type of address family*/
@@ -49,14 +54,17 @@ int main(){
 	ret = connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	/* If there is an error in connection, ret will be -1 */
 	if(ret < 0){
-		printf("[-]Error in connection.\n");
+		printf("!!! Connection Error !!!\n");
 		exit(1);
 	}
-	printf("[+]Connected to Server.\n");
+	printf("!!! Connected !!!\n");
 
 	/* Infinite Loop, until forced exit */
 
 	while(1){
+		buffer[0] = '\0';
+		/*Clear Buffer*/
+
 		printf("Client: \t");
 		/* scanf(const char *format)
 			 format = "%S"
@@ -75,10 +83,25 @@ int main(){
 		send(clientSocket, buffer, strlen(buffer), 0);
 
 		/* Compares the buffer string to ":Exit" if True, connection is closed */
-		if(strcmp(buffer, ":exit") == 0){
+
+		if(strcmp(buffer,":exit\n")==0){
 			close(clientSocket);
 			printf("[-]Disconnected from server.\n");
 			exit(1);
+		}
+
+		if(strcmp(buffer, ":timer\n") == 0) {
+
+			auto tClient = chrono::system_clock::now();
+			printf("Server: \n %s\n ", buffer);
+			auto tServer = chrono::system_clock::now();
+			int elapsed = chrono::duration_cast<chrono::nanoseconds>(tServer-tClient).count();
+			cout << "Time Elapsed : " << elapsed << " nanoseconds" << endl
+					<< "Throughput : " << (float)1024/elapsed << " kB/ns" << endl;
+
+			close(clientSocket);
+			exit(1);
+
 		}
 
 		/*
@@ -88,9 +111,10 @@ int main(){
 			If error (< 0) Error
 		*/
 		if(recv(clientSocket, buffer, 1024, 0) < 0){
-			printf("[-]Error in receiving data.\n");
+			printf("!!! Error !!!\n");
 		}else{
 			printf("Server: \n%s\n ", buffer);
+
 		}
 	}
 

@@ -25,6 +25,8 @@ int main(int argc, char const *argv[])
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+
 FILE *fp;
 const int PATH_MAX = 1024;
 char path[PATH_MAX];
@@ -34,7 +36,7 @@ char path[PATH_MAX];
 int main(){
 
 	int sockfd, ret;
-	 struct sockaddr_in serverAddr;
+	struct sockaddr_in serverAddr;
 
 	int newSocket;
 	struct sockaddr_in newAddr;
@@ -46,10 +48,10 @@ int main(){
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0){
-		printf("[-]Error in connection.\n");
+		printf("Connection Failed\n");
 		exit(1);
 	}
-	printf("[+]Server Socket is created.\n");
+	printf("!!! Server Developed !!!\n");
 
 	memset(&serverAddr, '\0', sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
@@ -58,15 +60,15 @@ int main(){
 
 	ret = bind(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	if(ret < 0){
-		printf("[-]Error in binding.\n");
+		printf("!!! Binding Error !!!\n");
 		exit(1);
 	}
-	printf("[+]Bind to port %d\n", 4444);
+	printf("!!! Binded !!! %d\n", 4444);
 
 	if(listen(sockfd, 10) == 0){
-		printf("[+]Listening....\n");
+		printf("!!! Waiting for Client :\n");
 	}else{
-		printf("[-]Error in binding.\n");
+		printf("!!! Binding Error !!!\n");
 	}
 
 
@@ -82,19 +84,24 @@ int main(){
 
 			while(1){
 				recv(newSocket, buffer, 1024, 0);
-				if(strcmp(buffer, ":exit") == 0){
+
+				if(strcmp(buffer, ":exit\n") == 0){
 					printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
+					close(newSocket);
 					break;
 				}
-				else if(strcmp(buffer, "pwd") == 0){
+				else if(strcmp(buffer, "pwd\n") == 0){
 					fp = popen("pwd","r");
 					while (fgets(path,PATH_MAX,fp) != NULL) {
 						send(newSocket,path,strlen(path),0);
 					}
+
 					pclose(fp);
 				}
+				else if(strcmp(buffer,":timer\n")==0){
+						send(newSocket,buffer,strlen(buffer),0);
+				}
 				else{
-
 					printf("Client: %s\n", buffer);
 					/*
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -104,8 +111,10 @@ int main(){
 					while (fgets(path,PATH_MAX,fp) != NULL) {
 						send(newSocket,path,strlen(path),0);
 					}
+					fp=popen("","r");
 					pclose(fp);
 				}
+				
 			}
 		}
 
